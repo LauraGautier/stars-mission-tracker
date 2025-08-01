@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Tableau de bord</title>
+</head>
+<body>
+<main>
+    <!-- Header avec logo S.T.A.R.S. -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="jumbotron bg-stars text-white p-4 rounded">
+                <div class="text-center">
+                    <i class="fas fa-shield-alt fa-3x mb-3"></i>
+                    <h1 class="display-4">S.T.A.R.S. Mission Tracker</h1>
+                    <p class="lead">Special Tactics And Rescue Service</p>
+                    <hr class="my-4 bg-light">
+                    <p>Système de gestion des missions et agents - Raccoon Police Department</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${totalAgents}">0</h4>
+                            <p class="mb-0">Agents Total</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${activeAgents}">0</h4>
+                            <p class="mb-0">Agents Actifs</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${totalMissions}">0</h4>
+                            <p class="mb-0">Missions Total</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tasks fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 th:text="${activeMissions}">0</h4>
+                            <p class="mb-0">En Cours</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Informations Générales
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h2 th:text="${mission.title}">Investigation Manoir Spencer</h2>
+                    <p th:text="${mission.description}" class="lead">
+                        Investigation des meurtres bizarres dans les montagnes Arklay.
+                        L'équipe Bravo S.T.A.R.S. a perdu le contact. Mission de recherche et sauvetage.
+                    </p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-map-marker-alt me-1"></i>Localisation</h6>
+                            <p th:text="${mission.location}">Montagnes Arklay - Manoir Spencer</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-calendar me-1"></i>Créée le</h6>
+                            <p th:text="${#temporals.format(mission.createdAt, 'dd/MM/yyyy à HH:mm')}">24/07/1998 à 20:00</p>
+                        </div>
+                    </div>
+
+                    <div class="row" th:if="${mission.startDate != null}">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-play me-1"></i>Début de mission</h6>
+                            <p th:text="${#temporals.format(mission.startDate, 'dd/MM/yyyy à HH:mm')}">24/07/1998 à 20:00</p>
+                        </div>
+                        <div class="col-md-6" th:if="${mission.endDate != null}">
+                            <h6><i class="fas fa-stop me-1"></i>Fin de mission</h6>
+                            <p th:text="${#temporals.format(mission.endDate, 'dd/MM/yyyy à HH:mm')}">25/07/1998 à 06:30</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes et rapport -->
+            <div class="card" th:if="${mission.notes != null and not #strings.isEmpty(mission.notes)}">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sticky-note me-2"></i>Rapport de Mission
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p th:text="${mission.notes}" class="mb-0">
+                            Mission terminée avec succès. Découverte d'expériences illégales d'Umbrella.
+                            Manoir détruit. Plusieurs agents portés disparus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar avec infos mission -->
+        <div class="col-md-4">
+            <!-- Statut et priorité -->
+            <div class="card mb-3">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-flag me-1"></i>Statut Mission
+                    </h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                            <span th:class="'badge fs-6 ' +
+                                (${mission.status == 'COMPLETED'} ? 'bg-success' :
+                                 ${mission.status == 'IN_PROGRESS'} ? 'bg-primary' :
+                                 ${mission.status == 'FAILED'} ? 'bg-danger' :
+                                 ${mission.status == 'CANCELLED'} ? 'bg-secondary' : 'bg-warning text-dark')"
+                                  th:text="${mission.status.displayName}">Terminée</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Niveau de Priorité</h6>
+                        <span th:class="'badge fs-6 ' +
+                                (${mission.priority == 'CRITICAL'} ? 'bg-danger' :
+                                 ${mission.priority == 'HIGH'} ? 'bg-warning text-dark' :
+                                 ${mission.priority == 'MEDIUM'} ? 'bg-info' : 'bg-secondary')"
+                              th:text="${mission.priority}">CRITICAL</span>
+                    </div>
+
+                    <!-- Durée de mission -->
+                    <div th:if="${mission.startDate != null and mission.endDate != null}">
+                        <h6>Durée</h6>
+                        <p class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            <span th:text="${#temporals.daysBetween(mission.startDate, mission.endDate)} + ' jour(s)'">1 jour(s)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agent assigné -->
+            <div class="card mb-3">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-user me-1"></i>Agent Assigné
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div th:if="${mission.assignedAgent != null}" class="text-center">
+                        <i class="fas fa-user-circle fa-3x text-muted mb-2"></i>
+                        <h6 th:text="${mission.assignedAgent.fullName}">Chris Redfield</h6>
+                        <p class="text-muted mb-2" th:text="${mission.assignedAgent.rank + ' - ' + mission.assignedAgent.specialization}">
+                            Lieutenant - Combat/Armes lourdes
+                        </p>
+                        <span class="badge bg-secondary" th:text="${mission.assignedAgent.badgeNumber}">STARS-001</span>
+                        <div class="mt-3">
+                            <a th:href="@{/agents/{id}(id=${mission.assignedAgent.id})}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>Voir le profil
+                            </a>
+                        </div>
+                    </div>
+                    <div th:if="${mission.assignedAgent == null}" class="text-center text-muted py-3">
+                        <i class="fas fa-user-slash fa-2x mb-2"></i>
+                        <p class="mb-0">Aucun agent assigné</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification -->
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-1"></i>Classification
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning mb-0">
+                        <small>
+                            <i class="fas fa-lock me-1"></i><strong>CONFIDENTIEL S.T.A.R.S.</strong><br>
+                            Accès restreint au personnel autorisé uniquement.
+                            Toute divulgation non autorisée est passible de sanctions.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline si mission terminée -->
+    <div class="row mt-4" th:if="${mission.startDate != null}">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>Chronologie
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Mission créée</h6>
+                                <p class="timeline-description" th:text="${#temporals.format(mission.createdAt, 'dd/MM/yyyy à HH:mm')}">24/07/1998 à 18:00</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Début de mission</h6>
+                                <p class="timeline-description" th:text="${#temporals.format(mission.startDate, 'dd/MM/yyyy à HH:mm')}">24/07/1998 à 20:00</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" th:if="${mission.endDate != null}">
+                            <div th:class="'timeline-marker ' + (${mission.status == 'COMPLETED'} ? 'bg-success' : 'bg-danger')"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title" th:text="${mission.status == 'COMPLETED' ? 'Mission terminée' : 'Mission échouée'}">Mission terminée</h6>
+                                <p class="timeline-description" th:text="${#temporals.format(mission.endDate, 'dd/MM/yyyy à HH:mm')}">25/07/1998 à 06:30</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="mt-4">
+        <a th:href="@{/missions}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Retour aux missions
+        </a>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Missions S.T.A.R.S.</title>
+</head>
+<body>
+<main>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-tasks me-2"></i>Missions S.T.A.R.S.
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+                <li class="breadcrumb-item active">Missions</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-stars text-white">
+                    <h5 class="mb-0">Opérations et Missions en Cours</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Code Mission</th>
+                                <th>Titre</th>
+                                <th>Agent Assigné</th>
+                                <th>Priorité</th>
+                                <th>Statut</th>
+                                <th>Lieu</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="mission : ${missions}">
+                                <td>
+                                    <code th:text="${mission.codeName}">MANSION-INCIDENT</code>
+                                </td>
+                                <td>
+                                    <strong th:text="${mission.title}">Investigation Manoir Spencer</strong><br>
+                                    <small class="text-muted" th:text="${#strings.abbreviate(mission.description, 50)}">
+                                        Investigation des meurtres bizarres dans les montagnes...
+                                    </small>
+                                </td>
+                                <td>
+                                    <div th:if="${mission.assignedAgent != null}">
+                                        <i class="fas fa-user me-1"></i>
+                                        <a th:href="@{/agents/{id}(id=${mission.assignedAgent.id})}"
+                                           th:text="${mission.assignedAgent.fullName}"
+                                           class="text-decoration-none">Chris Redfield</a><br>
+                                        <small class="text-muted" th:text="${mission.assignedAgent.rank}">Lieutenant</small>
+                                    </div>
+                                    <span th:if="${mission.assignedAgent == null}" class="text-muted">
+                                                <i class="fas fa-user-times me-1"></i>Non assigné
+                                            </span>
+                                </td>
+                                <td>
+                                            <span th:class="'badge ' +
+                                                (${mission.priority == 'CRITICAL'} ? 'bg-danger' :
+                                                 ${mission.priority == 'HIGH'} ? 'bg-warning text-dark' :
+                                                 ${mission.priority == 'MEDIUM'} ? 'bg-info' : 'bg-secondary')"
+                                                  th:text="${mission.priority}">CRITICAL</span>
+                                </td>
+                                <td>
+                                            <span th:class="'badge ' +
+                                                (${mission.status == 'COMPLETED'} ? 'bg-success' :
+                                                 ${mission.status == 'IN_PROGRESS'} ? 'bg-primary' :
+                                                 ${mission.status == 'FAILED'} ? 'bg-danger' :
+                                                 ${mission.status == 'CANCELLED'} ? 'bg-secondary' : 'bg-warning text-dark')"
+                                                  th:text="${mission.status.displayName}">Terminée</span>
+                                </td>
+                                <td>
+                                    <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                                    <span th:text="${mission.location}">Montagnes Arklay</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/missions/{id}(id=${mission.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>Détails
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Légende des priorités -->
+    <div class="mt-4">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-1"></i>Niveaux de Priorité
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <span class="badge bg-danger me-2">CRITICAL</span>Menace immédiate
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-warning text-dark me-2">HIGH</span>Priorité élevée
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-info me-2">MEDIUM</span>Priorité normale
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-secondary me-2">LOW</span>Priorité faible
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title th:text="'Agent ' + ${agent.fullName}">Détail Agent</title>
+</head>
+<body>
+<main>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 th:text="'Agent ' + ${agent.fullName}">Agent Chris Redfield</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/com/stars/missiontracker/templates/agents}">Agents</a></li>
+                <li class="breadcrumb-item active" th:text="${agent.fullName}">Chris Redfield</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <!-- Informations personnelles -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-stars text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-id-card me-2"></i>Informations Personnelles
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-user-circle fa-5x text-muted"></i>
+                    </div>
+                    <h4 th:text="${agent.fullName}">Chris Redfield</h4>
+                    <p class="text-muted mb-3" th:text="${agent.specialization}">Combat/Armes lourdes</p>
+
+                    <div class="row text-start">
+                        <div class="col-12 mb-2">
+                            <strong>Badge :</strong>
+                            <span class="badge bg-secondary" th:text="${agent.badgeNumber}">STARS-001</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>Grade :</strong>
+                            <span class="badge bg-info" th:text="${agent.rank}">Lieutenant</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>Statut :</strong>
+                            <span th:class="'badge ' + (${agent.status == 'ACTIVE'} ? 'bg-success' : 'bg-warning')" th:text="${agent.status}">ACTIVE</span>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <strong>Intégration :</strong><br>
+                            <span th:text="${#temporals.format(agent.joinDate, 'dd/MM/yyyy')}">15/01/1996</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="card mt-3">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar me-1"></i>Statistiques
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <h4 th:text="${#lists.size(missions)}" class="text-primary">0</h4>
+                            <small>Missions</small>
+                        </div>
+                        <div class="col-6">
+                            <h4 th:text="${#temporals.daysBetween(agent.joinDate, #temporals.createNow())}" class="text-success">0</h4>
+                            <small>Jours de service</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biographie et missions -->
+        <div class="col-md-8">
+            <!-- Biographie -->
+            <div class="card mb-3">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>Biographie
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p th:text="${agent.bio}">
+                        Ancien membre des Forces Spéciales. Expert en combat rapproché et armes lourdes.
+                        Vétéran de multiples incidents impliquant des armes biologiques.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Missions assignées -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tasks me-2"></i>Missions Assignées
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div th:if="${#lists.isEmpty(missions)}" class="text-center text-muted py-4">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>Aucune mission assignée actuellement</p>
+                    </div>
+
+                    <div th:if="${not #lists.isEmpty(missions)}">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Mission</th>
+                                    <th>Priorité</th>
+                                    <th>Statut</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="mission : ${missions}">
+                                    <td>
+                                        <code th:text="${mission.codeName}">MANSION-INCIDENT</code>
+                                    </td>
+                                    <td th:text="${mission.title}">Investigation Manoir Spencer</td>
+                                    <td>
+                                                <span th:class="'badge ' +
+                                                    (${mission.priority == 'CRITICAL'} ? 'bg-danger' :
+                                                     ${mission.priority == 'HIGH'} ? 'bg-warning' :
+                                                     ${mission.priority == 'MEDIUM'} ? 'bg-info' : 'bg-secondary')"
+                                                      th:text="${mission.priority}">CRITICAL</span>
+                                    </td>
+                                    <td>
+                                                <span th:class="'badge ' +
+                                                    (${mission.status == 'COMPLETED'} ? 'bg-success' :
+                                                     ${mission.status == 'IN_PROGRESS'} ? 'bg-primary' :
+                                                     ${mission.status == 'FAILED'} ? 'bg-danger' : 'bg-secondary')"
+                                                      th:text="${mission.status.displayName}">Terminée</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/missions/{id}(id=${mission.id})}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton retour -->
+    <div class="mt-4">
+        <a th:href="@{/com/stars/missiontracker/templates/agents}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+        </a>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Agents S.T.A.R.S.</title>
+</head>
+<body>
+<main>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-users me-2"></i>Agents S.T.A.R.S.
+        </h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+                <li class="breadcrumb-item active">Agents</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-stars text-white">
+                    <h5 class="mb-0">Équipe S.T.A.R.S. - Raccoon Police Department</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Badge</th>
+                                <th>Agent</th>
+                                <th>Grade</th>
+                                <th>Spécialisation</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="agent : ${agents}">
+                                <td>
+                                    <span class="badge bg-secondary" th:text="${agent.badgeNumber}">STARS-001</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar me-2">
+                                            <i class="fas fa-user-circle fa-2x text-muted"></i>
+                                        </div>
+                                        <div>
+                                            <strong th:text="${agent.fullName}">Chris Redfield</strong><br>
+                                            <small class="text-muted" th:text="'Depuis le ' + ${#temporals.format(agent.joinDate, 'dd/MM/yyyy')}">Depuis le 15/01/1996</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info" th:text="${agent.rank}">Lieutenant</span>
+                                </td>
+                                <td th:text="${agent.specialization}">Combat/Armes lourdes</td>
+                                <td>
+                                            <span th:class="'badge ' + (${agent.status == 'ACTIVE'} ? 'bg-success' : (${agent.status == 'SUSPICIOUS'} ? 'bg-warning' : 'bg-danger'))"
+                                                  th:text="${agent.status}">ACTIVE</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/agents/{id}(id=${agent.id})}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>Détails
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info supplémentaire -->
+    <div class="mt-4">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0">
+                    <i class="fas fa-info-circle me-1"></i>Informations
+                </h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">
+                    <strong>S.T.A.R.S.</strong> (Special Tactics And Rescue Service) est une unité d'élite
+                    du département de police de Raccoon City, spécialisée dans les situations d'urgence
+                    et les menaces exceptionnelles.
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
