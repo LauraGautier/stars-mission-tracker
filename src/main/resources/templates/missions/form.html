@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${mission.id != null ? 'Modifier Mission' : 'Nouvelle Mission'}">Formulaire Mission</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-stars { background: linear-gradient(135deg, #1a237e 0%, #0d1554 100%); }
+        .priority-critical { border-left: 4px solid #dc3545; }
+        .priority-high { border-left: 4px solid #fd7e14; }
+        .priority-medium { border-left: 4px solid #0dcaf0; }
+        .priority-low { border-left: 4px solid #6c757d; }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-stars">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <i class="fas fa-shield-alt me-2"></i>
+            <strong>S.T.A.R.S.</strong> Mission Tracker
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" th:href="@{/}"><i class="fas fa-home me-1"></i>Accueil</a>
+            <a class="nav-link" th:href="@{/agents}"><i class="fas fa-users me-1"></i>Agents</a>
+            <a class="nav-link" th:href="@{/missions}"><i class="fas fa-tasks me-1"></i>Missions</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/missions}">Missions</a></li>
+            <li class="breadcrumb-item active" th:text="${mission.id != null ? 'Modifier' : 'Nouvelle'}">Nouvelle</li>
+        </ol>
+    </nav>
+
+    <!-- Messages -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-stars text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-file-plus me-2" th:if="${mission.id == null}"></i>
+                        <i class="fas fa-file-edit me-2" th:if="${mission.id != null}"></i>
+                        <span th:text="${mission.id != null ? 'Modifier Mission' : 'Nouvelle Mission S.T.A.R.S.'}">Nouvelle Mission</span>
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form th:action="${mission.id != null ? '/missions/' + mission.id : '/missions'}" method="post" th:object="${mission}">
+                        <!-- Informations de base -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="codeName" class="form-label">Code Mission</label>
+                                    <input type="text" class="form-control" id="codeName" th:field="*{codeName}"
+                                           placeholder="AUTO-GÉNÉRÉ si vide (ex: MISSION-006)">
+                                    <div class="form-text">Format recommandé: XXXXX-XXX (généré automatiquement si vide)</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="priority" class="form-label">Niveau de Priorité *</label>
+                                    <select class="form-select" id="priority" th:field="*{priority}" required>
+                                        <option value="">Sélectionner une priorité</option>
+                                        <option value="LOW" class="text-secondary">🟢 LOW - Priorité faible</option>
+                                        <option value="MEDIUM" class="text-info">🔵 MEDIUM - Priorité normale</option>
+                                        <option value="HIGH" class="text-warning">🟡 HIGH - Priorité élevée</option>
+                                        <option value="CRITICAL" class="text-danger">🔴 CRITICAL - Menace immédiate</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Titre et description -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre de la Mission *</label>
+                            <input type="text" class="form-control" id="title" th:field="*{title}"
+                                   placeholder="ex: Investigation Laboratoire Umbrella" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description Détaillée *</label>
+                            <textarea class="form-control" id="description" th:field="*{description}" rows="4"
+                                      placeholder="Objectifs, contexte, menaces potentielles, équipement requis..." required></textarea>
+                        </div>
+
+                        <!-- Localisation -->
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Localisation *</label>
+                            <input type="text" class="form-control" id="location" th:field="*{location}"
+                                   placeholder="ex: Laboratoire souterrain - Raccoon City" required>
+                            <div class="form-text">Soyez précis : bâtiment, étage, zone géographique</div>
+                        </div>
+
+                        <!-- Agent assigné et statut -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assignedAgentId" class="form-label">Agent Assigné</label>
+                                    <select class="form-select" id="assignedAgentId" name="assignedAgentId">
+                                        <option value="">Aucun agent assigné</option>
+                                        <option th:each="agent : ${agents}"
+                                                th:value="${agent.id}"
+                                                th:text="${agent.fullName + ' - ' + agent.rank + ' (' + agent.specialization + ')'}"
+                                                th:selected="${mission.assignedAgent != null and mission.assignedAgent.id == agent.id}">
+                                            Chris Redfield - Lieutenant (Combat/Armes lourdes)
+                                        </option>
+                                    </select>
+                                    <div class="form-text">Seuls les agents actifs sont affichés</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" th:if="${mission.id != null}">
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Statut</label>
+                                    <select class="form-select" id="status" th:field="*{status}">
+                                        <option th:each="status : ${statuses}"
+                                                th:value="${status}"
+                                                th:text="${status.displayName}"
+                                                th:selected="${mission.status == status}">
+                                            En attente
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dates (pour modification uniquement) -->
+                        <div class="row" th:if="${mission.id != null}">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="startDate" class="form-label">Date de Début</label>
+                                    <input type="datetime-local" class="form-control" id="startDate" th:field="*{startDate}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="endDate" class="form-label">Date de Fin</label>
+                                    <input type="datetime-local" class="form-control" id="endDate" th:field="*{endDate}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes et Observations</label>
+                            <textarea class="form-control" id="notes" th:field="*{notes}" rows="3"
+                                      placeholder="Informations supplémentaires, rapport de mission, observations..."></textarea>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/missions}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>
+                                <span th:text="${mission.id != null ? 'Modifier Mission' : 'Créer Mission'}">Créer Mission</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar avec aide -->
+        <div class="col-lg-4">
+            <!-- Guide des priorités -->
+            <div class="card mb-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="fas fa-info-circle me-1"></i>Guide des Priorités</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2 priority-critical p-2 rounded">
+                        <strong class="text-danger">CRITICAL</strong><br>
+                        <small>Menace immédiate pour la population. Déploiement d'urgence requis.</small>
+                    </div>
+                    <div class="mb-2 priority-high p-2 rounded">
+                        <strong class="text-warning">HIGH</strong><br>
+                        <small>Situation dangereuse nécessitant une intervention rapide.</small>
+                    </div>
+                    <div class="mb-2 priority-medium p-2 rounded">
+                        <strong class="text-info">MEDIUM</strong><br>
+                        <small>Mission standard avec délai raisonnable.</small>
+                    </div>
+                    <div class="priority-low p-2 rounded">
+                        <strong class="text-secondary">LOW</strong><br>
+                        <small>Mission de routine, pas d'urgence particulière.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agents disponibles -->
+            <div class="card mb-3" th:if="${not agents.empty}">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-users me-1"></i>Agents Disponibles</h6>
+                </div>
+                <div class="card-body">
+                    <div th:each="agent : ${agents}" class="mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle me-2 text-muted"></i>
+                            <div class="flex-grow-1">
+                                <strong th:text="${agent.fullName}">Chris Redfield</strong><br>
+                                <small class="text-muted" th:text="${agent.rank + ' - ' + agent.specialization}">
+                                    Lieutenant - Combat/Armes lourdes
+                                </small>
+                            </div>
+                            <span class="badge bg-success" th:text="${agent.status}">ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conseils -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h6 class="mb-0"><i class="fas fa-lightbulb me-1"></i>Conseils</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <small>Assignez l'agent selon sa spécialisation</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <small>Détaillez les objectifs dans la description</small>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <small>Indiquez les risques biologiques potentiels</small>
+                        </li>
+                        <li>
+                            <i class="fas fa-check text-success me-2"></i>
+                            <small>Précisez l'équipement de protection requis</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerte biohazard -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="alert alert-danger">
+                <h6><i class="fas fa-exclamation-triangle me-2"></i>Protocole Biohazard</h6>
+                <p class="mb-0">
+                    <small>
+                        Toute mission impliquant des substances biologiques suspectes doit être classée CRITICAL.
+                        L'équipement de protection NBC (Nucléaire, Biologique, Chimique) est obligatoire.
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script pour prévisualisation de priorité -->
+<script>
+    document.getElementById('priority').addEventListener('change', function() {
+        const priority = this.value;
+        const card = document.querySelector('.card');
+
+        // Retirer les anciennes classes
+        card.classList.remove('priority-critical', 'priority-high', 'priority-medium', 'priority-low');
+
+        // Ajouter la nouvelle classe
+        if (priority) {
+            card.classList.add('priority-' + priority.toLowerCase());
+        }
+    });
+
+    // Initialiser la couleur si une priorité est déjà sélectionnée
+    window.addEventListener('load', function() {
+        const priority = document.getElementById('priority').value;
+        if (priority) {
+            document.querySelector('.card').classList.add('priority-' + priority.toLowerCase());
+        }
+    });
+</script>
+</body>
+</html>

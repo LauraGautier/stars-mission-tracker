@@ -1,0 +1,210 @@
+/* Style personnalisé pour S.T.A.R.S. Mission Tracker */
+
+:root {
+    --stars-blue: #1a237e;
+    --stars-dark-blue: #0d1554;
+    --stars-red: #c62828;
+    --stars-gold: #ffd700;
+}
+
+/* Navigation personnalisée */
+.bg-stars {
+    background: linear-gradient(135deg, var(--stars-blue) 0%, var(--stars-dark-blue) 100%);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Cards et containers */
+.jumbotron {
+    background: linear-gradient(135deg, var(--stars-blue) 0%, var(--stars-dark-blue) 100%);
+    border-radius: 10px;
+}
+
+/* Badges personnalisés */
+.badge {
+    font-size: 0.75em;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -23px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 2px #e9ecef;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timeline-title {
+    margin-bottom: 5px;
+    color: var(--stars-blue);
+    font-weight: bold;
+}
+
+.timeline-description {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Avatar placeholder */
+.avatar {
+    display: inline-block;
+}
+
+/* Status badges colors */
+.bg-stars {
+    background: var(--stars-blue) !important;
+}
+
+/* Hover effects */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Table responsive improvements */
+.table th {
+    border-top: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    font-weight: bold;
+}
+
+/* Alert improvements */
+.alert {
+    border-left: 4px solid;
+}
+
+.alert-danger {
+    border-left-color: var(--stars-red);
+}
+
+.alert-warning {
+    border-left-color: var(--stars-gold);
+}
+
+.alert-info {
+    border-left-color: var(--stars-blue);
+}
+
+/* Code styling */
+code {
+    background: #f8f9fa;
+    color: var(--stars-blue);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 20px;
+    }
+
+    .timeline-marker {
+        left: -13px;
+        width: 12px;
+        height: 12px;
+    }
+
+    .timeline::before {
+        left: 5px;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar, .breadcrumb, .btn, footer {
+        display: none !important;
+    }
+
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+
+    .bg-stars, .bg-dark {
+        background: #000 !important;
+        color: #fff !important;
+    }
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(26, 35, 126, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--stars-blue);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--stars-blue);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--stars-dark-blue);
+}
