@@ -10,7 +10,7 @@ Application de gestion des missions pour l'équipe S.T.A.R.S. (Special Tactics A
 
 ### Installation et Lancement
 
-1. **Cloner le repository**
 ```bash
 git clone https://github.com/LauraGautier/stars-mission-tracker.git
 cd stars-mission-tracker
+mvn spring-boot:run
